@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ONEXO — Share your ideas with the world.</title>
+<meta name="description" content="ONEXO is a modern social platform for sharing ideas, posts, achievements, and meaningful connections.">
+<style>
+/* ============================================================
+   RESET & ROOT
+============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+:root {
+  --bg: #08080D;
+  --bg2: #0D0D16;
+  --bg3: #111119;
+  --card: #13131E;
+  --card2: #171724;
+  --border: rgba(255,255,255,0.07);
+  --blue: #1D6EFF;
+  --blue2: #4A90FF;
+  --blue-glow: rgba(29,110,255,0.22);
+  --green: #2ECC71;
+  --white: #FFFFFF;
+  --t1: rgba(255,255,255,0.90);
+  --t2: rgba(255,255,255,0.60);
+  --t3: rgba(255,255,255,0.38);
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+a { text-decoration: none; color: inherit; }
+img { display: block; max-width: 100%; }
+button { border: none; background: none; cursor: pointer; font-family: inherit; }
+
+/* ============================================================
+   UTILITIES
+============================================================ */
+.container {
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.sec { padding: 96px 0; }
+.sec-dark  { background: var(--bg); }
+.sec-dark2 { background: var(--bg2); }
+.sec-dark3 { background: var(--bg3); }
+
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--blue2);
+  margin-bottom: 14px;
+}
+.h1 { font-size: clamp(2.6rem,5.5vw,4.4rem); font-weight: 800; line-height: 1.06; letter-spacing: -.02em; }
+.h2 { font-size: clamp(1.7rem,3.2vw,2.6rem); font-weight: 700; line-height: 1.12; letter-spacing: -.015em; }
+.h3 { font-size: 1rem; font-weight: 650; line-height: 1.3; }
+.lead { font-size: 1.05rem; color: var(--t2); line-height: 1.75; }
+.small { font-size: .83rem; color: var(--t3); line-height: 1.65; }
+.center { text-align: center; }
+.center .lead { max-width: 560px; margin-inline: auto; }
+
+/* BTN */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 12px 26px;
+  border-radius: 10px;
+  font-size: .9rem;
+  font-weight: 600;
+  transition: all .2s;
+  white-space: nowrap;
+}
+.btn-blue {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 4px 20px var(--blue-glow);
+}
+.btn-blue:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(29,110,255,.4); }
+.btn-ghost {
+  background: rgba(255,255,255,.06);
+  color: var(--white);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover { background: rgba(255,255,255,.11); transform: translateY(-2px); }
+
+/* CARD BASE */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  transition: transform .25s, border-color .25s, box-shadow .25s;
+}
+.card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(29,110,255,.22);
+  box-shadow: 0 20px 40px rgba(0,0,0,.35);
+}
+
+/* ICON BOX */
+.icon-box {
+  width: 44px; height: 44px;
+  background: rgba(29,110,255,.12);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.icon-box svg { width: 20px; height: 20px; stroke: var(--blue); fill: none; stroke-width: 1.9; }
+.icon-box-green { background: rgba(46,204,113,.1); }
+.icon-box-green svg { stroke: var(--green); }
+
+/* VERIFIED BADGE INLINE */
+.vbadge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 14px; height: 14px;
+  background: var(--blue);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.vbadge svg { width: 8px; height: 8px; fill: #fff; }
+
+/* DIVIDER */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(29,110,255,.15), transparent);
+}
+
+/* SCROLL REVEAL */
+.sr {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.sr.d1 { transition-delay: .1s; }
+.sr.d2 { transition-delay: .18s; }
+.sr.d3 { transition-delay: .26s; }
+.sr.d4 { transition-delay: .34s; }
+.sr.vis { opacity: 1; transform: none; }
+
+/* ============================================================
+   NAV
+============================================================ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 62px;
+  display: flex; align-items: center;
+  background: rgba(8,8,13,.78);
+  backdrop-filter: blur(22px);
+  border-bottom: 1px solid var(--border);
+}
+#nav .container {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-size: 1.05rem; font-weight: 800;
+  letter-spacing: .24em; color: var(--white);
+}
+.nav-links {
+  display: flex; gap: 28px; list-style: none;
+}
+.nav-links a {
+  font-size: .85rem; font-weight: 500; color: var(--t2);
+  transition: color .18s;
+}
+.nav-links a:hover { color: var(--white); }
+@media(max-width:768px){ .nav-links { display: none; } }
+
+/* ============================================================
+   HERO
+============================================================ */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 80px 0 60px;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% -5%, rgba(29,110,255,.18) 0%, transparent 68%),
+    var(--bg);
+  position: relative; overflow: hidden;
+}
+#hero::after {
+  content: '';
+  position: absolute;
+  right: -80px; top: 50%;
+  transform: translateY(-50%);
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(29,110,255,.09) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+}
+@media(max-width:860px){
+  .hero-grid { grid-template-columns: 1fr; text-align: center; gap: 44px; }
+  .hero-btns { justify-content: center; }
+  .hero-desc { margin-inline: auto; }
+  .hero-phone-wrap { order: -1; }
+}
+.hero-live-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(29,110,255,.1);
+  border: 1px solid rgba(29,110,255,.28);
+  color: var(--blue2);
+  padding: 5px 14px;
+  border-radius: 999px;
+  font-size: .75rem; font-weight: 700; letter-spacing: .05em;
+  margin-bottom: 22px;
+}
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--blue);
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+
+.hero-title {
+  font-size: clamp(3rem,7vw,5.2rem);
+  font-weight: 900;
+  letter-spacing: .2em;
+  line-height: 1.04;
+  margin-bottom: 16px;
+  background: linear-gradient(160deg, #fff 0%, rgba(255,255,255,.7) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-tagline {
+  font-size: clamp(1.1rem,2vw,1.45rem);
+  font-weight: 400;
+  color: var(--t2);
+  margin-bottom: 14px;
+}
+.hero-desc {
+  font-size: .97rem;
+  color: var(--t3);
+  line-height: 1.8;
+  max-width: 420px;
+  margin-bottom: 32px;
+}
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* PHONE */
+.hero-phone-wrap {
+  display: flex; justify-content: center; align-items: center;
+  position: relative;
+}
+.phone-glow {
+  position: absolute;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(29,110,255,.28) 0%, transparent 70%);
+  border-radius: 50%; filter: blur(36px); z-index: 0;
+}
+.phone {
+  position: relative; z-index: 1;
+  width: 248px;
+  background: #10101A;
+  border-radius: 38px;
+  border: 1.5px solid rgba(255,255,255,.11);
+  overflow: hidden;
+  box-shadow:
+    0 40px 80px rgba(0,0,0,.55),
+    0 0 0 1px rgba(29,110,255,.08),
+    inset 0 1px 0 rgba(255,255,255,.07);
+}
+.phone-notch-bar {
+  height: 28px;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 4px;
+}
+.phone-notch-pill {
+  width: 80px; height: 16px;
+  background: #10101A;
+  border-radius: 0 0 12px 12px;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+}
+.notch-cam {
+  width: 7px; height: 7px; border-radius: 50%; background: #1A1A2A;
+}
+.phone-body { background: #09090F; padding-bottom: 16px; }
+
+/* Phone Header */
+.ph-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 14px 7px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.ph-logo { font-size: .78rem; font-weight: 800; letter-spacing: .22em; }
+.ph-icons { display: flex; gap: 9px; }
+.ph-icons svg { width: 13px; height: 13px; stroke: rgba(255,255,255,.45); fill: none; stroke-width: 2; }
+
+/* Feed Post */
+.ph-post {
+  padding: 9px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.035);
+}
+.ph-post-top {
+  display: flex; align-items: center; gap: 7px; margin-bottom: 6px;
+}
+.ph-av {
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+}
+.av1 { background: linear-gradient(135deg,#1D6EFF,#4A90FF); }
+.av2 { background: linear-gradient(135deg,#9B59B6,#3498DB); }
+.av3 { background: linear-gradient(135deg,#E74C3C,#F39C12); }
+.ph-name-row { display: flex; align-items: center; gap: 4px; }
+.ph-name { font-size: .65rem; font-weight: 700; color: var(--white); }
+.ph-time { font-size: .55rem; color: var(--t3); margin-top: 1px; }
+.ph-text { font-size: .6rem; color: var(--t2); line-height: 1.55; margin-bottom: 6px; }
+.ph-img {
+  height: 64px;
+  background: linear-gradient(135deg,#0f1a35,#1a2a55);
+  border-radius: 7px; margin-bottom: 6px;
+}
+.ph-actions { display: flex; gap: 10px; align-items: center; }
+.ph-act { display: flex; align-items: center; gap: 3px; }
+.ph-act svg { width: 11px; height: 11px; stroke: var(--t3); fill: none; stroke-width: 2; }
+.ph-act span { font-size: .55rem; color: var(--t3); }
+.ph-act-save { margin-left: auto; }
+
+/* Sponsored in feed */
+.ph-ad {
+  margin: 4px 14px 0;
+  background: rgba(29,110,255,.07);
+  border: 1px solid rgba(29,110,255,.2);
+  border-radius: 9px;
+  padding: 8px 10px;
+}
+.ph-ad-tag { font-size: .5rem; font-weight: 800; letter-spacing: .08em; color: var(--blue2); text-transform: uppercase; margin-bottom: 3px; }
+.ph-ad-title { font-size: .62rem; font-weight: 700; color: var(--white); }
+.ph-ad-sub { font-size: .55rem; color: var(--t3); margin-top: 2px; }
+.ph-ad-btn {
+  display: inline-block; margin-top: 5px;
+  background: var(--blue); color: #fff;
+  font-size: .5rem; font-weight: 700;
+  padding: 3px 9px; border-radius: 5px;
+}
+
+/* ============================================================
+   FEATURES
+============================================================ */
+.feat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
+  gap: 14px;
+  margin-top: 52px;
+}
+.feat-card {
+  padding: 24px 22px;
+  position: relative; overflow: hidden;
+}
+.feat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(29,110,255,.28), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.feat-card:hover::before { opacity: 1; }
+.feat-title { font-size: .93rem; font-weight: 700; margin: 14px 0 6px; }
+.feat-desc { font-size: .82rem; color: var(--t3); line-height: 1.65; }
+
+/* ============================================================
+   FEED VISUAL
+============================================================ */
+.feed-list {
+  display: flex; flex-direction: column; gap: 8px;
+  max-width: 500px; margin: 0 auto;
+}
+.feed-row {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 13px 16px;
+  transition: border-color .2s;
+}
+.feed-row:hover { border-color: rgba(29,110,255,.2); }
+.feed-row-av {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+}
+.feed-row-body { flex: 1; }
+.feed-row-name { font-size: .8rem; font-weight: 650; }
+.feed-row-sub { font-size: .7rem; color: var(--t3); margin-top: 2px; }
+.feed-row-ad {
+  background: linear-gradient(135deg, rgba(29,110,255,.09), rgba(74,144,255,.04));
+  border-color: rgba(29,110,255,.24);
+}
+.ad-pill {
+  font-size: .62rem; font-weight: 800; letter-spacing: .06em;
+  color: var(--blue2); background: rgba(29,110,255,.12);
+  padding: 2px 9px; border-radius: 999px; flex-shrink: 0;
+}
+.fav1 { background: linear-gradient(135deg,#1D6EFF,#4A90FF); }
+.fav2 { background: linear-gradient(135deg,#9B59B6,#3498DB); }
+.fav3 { background: linear-gradient(135deg,#E74C3C,#F39C12); }
+.fav4 { background: linear-gradient(135deg,#2ECC71,#1ABC9C); }
+.fav5 { background: linear-gradient(135deg,#F39C12,#E74C3C); }
+.fav6 { background: linear-gradient(135deg,#8E44AD,#2980B9); }
+.fav-blue { background: linear-gradient(135deg,#1D6EFF,#4A90FF); }
+
+/* ============================================================
+   VERIFIED SECTION
+============================================================ */
+.verified-box {
+  max-width: 580px; margin: 48px auto 0;
+  padding: 44px 36px;
+  text-align: center;
+  background: linear-gradient(145deg, var(--card), rgba(29,110,255,.04));
+  border: 1px solid rgba(29,110,255,.2);
+  border-radius: var(--r-xl);
+  position: relative; overflow: hidden;
+}
+.verified-box::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--blue), transparent);
+}
+.vbig {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--blue2));
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 0 32px var(--blue-glow);
+}
+.vbig svg { width: 28px; height: 28px; fill: #fff; }
+.v-price {
+  font-size: 2.8rem; font-weight: 900; color: var(--blue);
+  letter-spacing: -.02em; margin: 16px 0 4px;
+}
+.v-price-sub { font-size: .78rem; color: var(--t3); margin-bottom: 24px; }
+.v-note { font-size: .82rem; color: var(--t3); margin-top: 14px; line-height: 1.65; }
+
+/* ============================================================
+   ADS SECTION
+============================================================ */
+.ads-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 56px;
+  align-items: center;
+}
+@media(max-width:860px){ .ads-grid { grid-template-columns: 1fr; gap: 40px; } }
+.ads-feats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 28px;
+}
+@media(max-width:480px){ .ads-feats { grid-template-columns: 1fr; } }
+.ads-feat {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 12px 14px;
+}
+.ads-feat svg { width: 15px; height: 15px; stroke: var(--blue); fill: none; stroke-width: 2; flex-shrink: 0; }
+.ads-feat span { font-size: .79rem; font-weight: 600; }
+.ad-card-preview {
+  background: var(--card2); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 22px;
+  position: relative; overflow: hidden;
+}
+.ad-card-preview::after {
+  content: '';
+  position: absolute; bottom: -50px; right: -50px;
+  width: 180px; height: 180px;
+  background: radial-gradient(circle, rgba(29,110,255,.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+.acp-label { font-size: .65rem; font-weight: 800; letter-spacing: .08em; color: var(--blue2); text-transform: uppercase; margin-bottom: 5px; }
+.acp-title { font-size: 1rem; font-weight: 700; }
+.acp-sub { font-size: .8rem; color: var(--t3); margin-top: 3px; }
+.acp-img {
+  height: 90px;
+  background: linear-gradient(135deg,#0f1e45,#2a1a5e,#1a0e3a);
+  border-radius: 10px; margin: 14px 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .6rem; color: var(--t3);
+}
+.acp-metrics {
+  display: flex; gap: 0; margin-top: 16px;
+  background: rgba(255,255,255,.03); border-radius: 10px; overflow: hidden;
+}
+.acp-met {
+  flex: 1; text-align: center;
+  padding: 10px 6px;
+  border-right: 1px solid var(--border);
+}
+.acp-met:last-child { border-right: none; }
+.acp-met-val { font-size: 1rem; font-weight: 800; color: var(--blue); }
+.acp-met-key { font-size: .6rem; color: var(--t3); margin-top: 2px; }
+
+/* ============================================================
+   BUILD APP
+============================================================ */
+.build-inner { max-width: 680px; margin: 0 auto; text-align: center; }
+.build-steps {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 14px;
+  margin: 40px 0 36px;
+}
+@media(max-width:560px){ .build-steps { grid-template-columns: 1fr; } }
+.build-step {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 24px 16px; text-align: center;
+}
+.build-step-num { font-size: .68rem; font-weight: 800; letter-spacing: .12em; color: var(--blue); margin-bottom: 8px; }
+.build-step-t { font-size: .88rem; font-weight: 700; margin-bottom: 6px; }
+.build-step-d { font-size: .75rem; color: var(--t3); line-height: 1.6; }
+
+/* ============================================================
+   SAFETY
+============================================================ */
+.safe-grid {
+  display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 12px;
+  margin-top: 52px;
+}
+.safe-card { padding: 22px 20px; }
+.safe-t { font-size: .88rem; font-weight: 700; margin: 12px 0 5px; }
+.safe-d { font-size: .78rem; color: var(--t3); line-height: 1.65; }
+
+/* ============================================================
+   ADMIN MOCK
+============================================================ */
+.admin-wrap {
+  display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px;
+  align-items: start;
+}
+@media(max-width:860px){ .admin-wrap { grid-template-columns: 1fr; gap: 36px; } }
+.admin-list { list-style: none; margin-top: 24px; display: flex; flex-direction: column; gap: 10px; }
+.admin-list li {
+  display: flex; align-items: center; gap: 10px;
+  font-size: .87rem; color: var(--t2);
+}
+.admin-list li::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--blue); flex-shrink: 0;
+}
+.adm-mock {
+  background: #0A0A14; border: 1px solid var(--border);
+  border-radius: var(--r-lg); overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,.4);
+}
+.adm-bar {
+  background: #0F0F1C; padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 6px;
+}
+.adm-dot { width: 9px; height: 9px; border-radius: 50%; }
+.adm-red { background: #FF5F57; }
+.adm-yel { background: #FEBC2E; }
+.adm-grn { background: #28C840; }
+.adm-bar-title { font-size: .68rem; color: var(--t3); margin-left: 8px; font-weight: 600; }
+.adm-body { display: flex; }
+.adm-sidebar {
+  width: 110px; background: #080812; border-right: 1px solid var(--border);
+  padding: 10px 0; flex-shrink: 0;
+}
+.adm-nav {
+  padding: 7px 12px; font-size: .62rem; color: var(--t3);
+  display: flex; align-items: center; gap: 6px; transition: all .15s;
+}
+.adm-nav.on { color: var(--white); background: rgba(29,110,255,.1); border-right: 2px solid var(--blue); }
+.adm-nav-dot2 { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.adm-main { flex: 1; padding: 12px; }
+.adm-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 10px; }
+.adm-stat {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 6px; text-align: center;
+}
+.adm-stat-val { font-size: .88rem; font-weight: 800; color: var(--blue); }
+.adm-stat-key { font-size: .5rem; color: var(--t3); margin-top: 2px; }
+.adm-tbl { width: 100%; border-collapse: collapse; }
+.adm-tbl th {
+  font-size: .52rem; color: var(--t3); text-align: left;
+  padding: 4px 5px; border-bottom: 1px solid var(--border);
+  font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+}
+.adm-tbl td { font-size: .58rem; color: var(--t2); padding: 5px 5px; border-bottom: 1px solid rgba(255,255,255,.03); }
+.status {
+  display: inline-block; font-size: .5rem; font-weight: 700;
+  padding: 1px 6px; border-radius: 4px;
+}
+.s-on { background: rgba(46,204,113,.15); color: #2ECC71; }
+.s-warn { background: rgba(254,188,46,.15); color: #FEBC2E; }
+
+/* ============================================================
+   SCREENS
+============================================================ */
+.screens-grid {
+  display: grid; grid-template-columns: repeat(auto-fill,minmax(185px,1fr)); gap: 14px;
+  margin-top: 52px;
+}
+.scr-card { overflow: hidden; }
+.scr-preview {
+  height: 200px; background: #0C0C16;
+  padding: 12px; overflow: hidden; position: relative;
+  display: flex; flex-direction: column;
+}
+.scr-hdr { font-size: .55rem; font-weight: 800; letter-spacing: .18em; color: var(--t3); margin-bottom: 9px; }
+.scr-bar { height: 7px; border-radius: 4px; background: rgba(255,255,255,.06); margin-bottom: 5px; }
+.scr-bar.blue { background: rgba(29,110,255,.28); }
+.scr-bar.w80 { width: 80%; }
+.scr-bar.w65 { width: 65%; }
+.scr-bar.w50 { width: 50%; }
+.scr-bar.w40 { width: 40%; }
+.scr-lbl { padding: 13px 16px 4px; font-size: .83rem; font-weight: 700; }
+.scr-sub { padding: 0 16px 13px; font-size: .72rem; color: var(--t3); }
+
+/* mini post inside screen */
+.mini-post { display: flex; gap: 6px; align-items: flex-start; margin-bottom: 7px; }
+.mini-av { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; }
+.mini-lines { flex: 1; }
+.mini-bar { height: 5px; border-radius: 3px; background: rgba(255,255,255,.08); margin-bottom: 3px; }
+
+/* msg bubble */
+.msg-b {
+  border-radius: 8px; padding: 5px 8px;
+  font-size: .52rem; color: var(--t2); margin-bottom: 4px;
+  max-width: 80%;
+}
+.msg-in { background: rgba(255,255,255,.06); }
+.msg-out { background: var(--blue); color: #fff; margin-left: auto; text-align: right; }
+
+/* ============================================================
+   FAQ
+============================================================ */
+.faq-wrap { max-width: 700px; margin: 48px auto 0; }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-q {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 0; gap: 14px;
+  font-size: .95rem; font-weight: 650; color: var(--white);
+  text-align: left; background: none; border: none; cursor: pointer;
+  transition: color .18s;
+}
+.faq-q:hover { color: var(--blue2); }
+.faq-arrow {
+  flex-shrink: 0; width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .3s;
+}
+.faq-arrow svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+.faq-item.open .faq-arrow { transform: rotate(180deg); }
+.faq-a {
+  font-size: .875rem; color: var(--t3); line-height: 1.8;
+  max-height: 0; overflow: hidden;
+  transition: max-height .35s ease, padding .3s;
+}
+.faq-item.open .faq-a { max-height: 200px; padding-bottom: 18px; }
+
+/* ============================================================
+   FOOTER
+============================================================ */
+footer {
+  background: #05050A;
+  border-top: 1px solid var(--border);
+  padding: 56px 0 28px;
+}
+.ft-inner { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 28px; margin-bottom: 40px; }
+.ft-logo { font-size: 1rem; font-weight: 800; letter-spacing: .24em; margin-bottom: 6px; }
+.ft-tag { font-size: .8rem; color: var(--t3); }
+.ft-links { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; }
+.ft-links a { font-size: .83rem; color: var(--t3); transition: color .18s; }
+.ft-links a:hover { color: var(--white); }
+.ft-bottom {
+  border-top: 1px solid var(--border); padding-top: 22px;
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+}
+.ft-copy { font-size: .78rem; color: var(--t3); }
+.ft-made { font-size: .78rem; color: var(--t3); }
+.ft-made span { color: var(--blue); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav id="nav">
+  <div class="container">
+    <a href="#hero" class="nav-logo">O N E X O</a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#ads">Advertise</a></li>
+      <li><a href="#verified">Verified</a></li>
+      <li><a href="#build">Build App</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a href="mailto:onexo.support@gmail.com?subject=Get Started with ONEXO" class="btn btn-blue" style="padding:9px 20px;font-size:.83rem;">Get Started</a>
+  </div>
+</nav>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section id="hero" class="sec">
+  <div class="container">
+    <div class="hero-grid">
+
+      <!-- Left -->
+      <div>
+        <div class="hero-live-badge sr">
+          <span class="live-dot"></span>
+          Now Live — Join ONEXO
+        </div>
+        <h1 class="hero-title sr d1">O N E X O</h1>
+        <p class="hero-tagline sr d2">Share your ideas with the world.</p>
+        <p class="hero-desc sr d2">ONEXO is a modern social platform for sharing ideas, posts, achievements, and meaningful connections.</p>
+        <div class="hero-btns sr d3">
+          <a href="mailto:onexo.support@gmail.com?subject=Get Started with ONEXO" class="btn btn-blue">Get Started</a>
+          <a href="mailto:onexo.support@gmail.com?subject=Advertise on ONEXO" class="btn btn-ghost">Advertise on ONEXO</a>
+        </div>
+      </div>
+
+      <!-- Phone Mockup -->
+      <div class="hero-phone-wrap sr d2">
+        <div class="phone-glow"></div>
+        <div class="phone">
+          <div class="phone-notch-bar">
+            <div class="phone-notch-pill">
+              <div class="notch-cam"></div>
+              <div class="notch-cam" style="width:4px;height:4px;background:#0a0a1a;border-radius:50%;"></div>
+            </div>
+          </div>
+          <div class="phone-body">
+            <!-- Header -->
+            <div class="ph-header">
+              <span class="ph-logo">O N E X O</span>
+              <div class="ph-icons">
+                <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              </div>
+            </div>
+            <!-- Post 1 -->
+            <div class="ph-post">
+              <div class="ph-post-top">
+                <div class="ph-av av1"></div>
+                <div>
+                  <div class="ph-name-row">
+                    <span class="ph-name">Arjun Sharma</span>
+                    <div class="vbadge"><svg viewBox="0 0 10 10"><path d="M3.5 6.5L2 5l-1 1 2.5 2.5 5-5L7.5 2z"/></svg></div>
+                  </div>
+                  <div class="ph-time">2 min ago</div>
+                </div>
+              </div>
+              <div class="ph-text">Just launched my new project! The response has been incredible.</div>
+              <div class="ph-actions">
+                <div class="ph-act">
+                  <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  <span>142</span>
+                </div>
+                <div class="ph-act">
+                  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <span>28</span>
+                </div>
+                <div class="ph-act">
+                  <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </div>
+                <div class="ph-act ph-act-save">
+                  <svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                </div>
+              </div>
+            </div>
+            <!-- Sponsored -->
+            <div class="ph-ad">
+              <div class="ph-ad-tag">Sponsored</div>
+              <div class="ph-ad-title">Launch Your Brand Online</div>
+              <div class="ph-ad-sub">Professional websites from ₹999</div>
+              <div class="ph-ad-btn">Learn More →</div>
+            </div>
+            <!-- Post 2 -->
+            <div class="ph-post">
+              <div class="ph-post-top">
+                <div class="ph-av av2"></div>
+                <div>
+                  <div class="ph-name-row"><span class="ph-name">Priya Nanda</span></div>
+                  <div class="ph-time">18 min ago</div>
+                </div>
+              </div>
+              <div class="ph-img"></div>
+              <div class="ph-actions">
+                <div class="ph-act">
+                  <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  <span>89</span>
+                </div>
+                <div class="ph-act">
+                  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  <span>11</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ FEATURES ══════════════ -->
+<section id="features" class="sec sec-dark2">
+  <div class="container">
+    <div class="center">
+      <p class="tag sr">Platform Features</p>
+      <h2 class="h2 sr d1">Everything you need to connect and grow</h2>
+      <p class="lead sr d2" style="margin-top:12px;">ONEXO is built for people who have ideas worth sharing. Every feature is designed to be fast, clean, and meaningful.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="card feat-card sr">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </div>
+        <h3 class="feat-title">Share Posts &amp; Ideas</h3>
+        <p class="feat-desc">Write text posts, share photos, and express your thoughts to a growing community that cares about real ideas.</p>
+      </div>
+      <div class="card feat-card sr d1">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3 class="feat-title">Follow People</h3>
+        <p class="feat-desc">Build your network by following creators, founders, and thinkers whose content resonates with you.</p>
+      </div>
+      <div class="card feat-card sr d2">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h3 class="feat-title">Like, Comment &amp; Save</h3>
+        <p class="feat-desc">React to posts, join conversations in comments, save what you love, and reshare with your followers.</p>
+      </div>
+      <div class="card feat-card sr d3">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <h3 class="feat-title">Search Users</h3>
+        <p class="feat-desc">Discover creators and interesting accounts with a fast, smart search built for growing communities.</p>
+      </div>
+      <div class="card feat-card sr">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3 class="feat-title">Private Messages</h3>
+        <p class="feat-desc">Direct, private conversations with anyone on the platform. Keep your important discussions personal.</p>
+      </div>
+      <div class="card feat-card sr d1">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+        </div>
+        <h3 class="feat-title">Verified Badge</h3>
+        <p class="feat-desc">Get the blue verified badge beside your username to signal authenticity and build trust with your audience.</p>
+      </div>
+      <div class="card feat-card sr d2">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+        </div>
+        <h3 class="feat-title">Sponsored Ads</h3>
+        <p class="feat-desc">Brands reach real users with native sponsored posts placed naturally inside the ONEXO feed.</p>
+      </div>
+      <div class="card feat-card sr d3">
+        <div class="icon-box">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 class="feat-title">Safety Controls</h3>
+        <p class="feat-desc">Robust protection for every user — from fake account detection to age verification and admin oversight.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ FEED EXPERIENCE ══════════════ -->
+<section id="feed" class="sec sec-dark">
+  <div class="container">
+    <div class="center" style="margin-bottom:44px;">
+      <p class="tag sr">Feed Design</p>
+      <h2 class="h2 sr d1">A feed that flows naturally</h2>
+      <p class="lead sr d2" style="margin-top:12px;">Sponsored ads appear naturally inside the feed, clearly marked as <strong style="color:var(--blue2)">Sponsored</strong> — never intrusive, always relevant.</p>
+    </div>
+    <div class="feed-list">
+      <div class="feed-row sr">
+        <div class="feed-row-av fav1"></div>
+        <div class="feed-row-body">
+          <div class="feed-row-name">User Post</div>
+          <div class="feed-row-sub">Text, photo, or idea</div>
+        </div>
+      </div>
+      <div class="feed-row sr d1">
+        <div class="feed-row-av fav2"></div>
+        <div class="feed-row-body">
+          <div class="feed-row-name">User Post</div>
+          <div class="feed-row-sub">Share achievement or update</div>
+        </div>
+      </div>
+      <div class="feed-row sr d2">
+        <div class="feed-row-av fav3"></div>
+        <div class="feed-row-body">
+          <div class="feed-row-name">User Post</div>
+          <div class="feed-row-sub">Image, text, or moment</div>
+        </div>
+      </div>
+      <div class="feed-row feed-row-ad sr">
+        <div class="feed-row-av fav-blue"></div>
+        <div class="feed-row-body">
+          <div class="feed-row-name" style="color:var(--blue2)">Sponsored Ad</div>
+          <div class="feed-row-sub">Brand promotion — clearly labeled</div>
+        </div>
+        <div class="ad-pill">AD</div>
+      </div>
+      <div class="feed-row sr d1">
+        <div class="feed-row-av fav4"></div>
+        <div class="feed-row-body">
+          <div class="feed-row-name">User Post</div>
+          <div class="feed-row-sub">Ideas, stories, content</div>
+        </div>
+      </div>
+      <div class="feed-row sr d2">
+        <div class="feed-row-av fav5"></div>
+        <div class="feed-row-body">
+          <div class="feed-row-name">User Post</div>
+          <div class="feed-row-sub">Conversation or question</div>
+        </div>
+      </div>
+      <div class="feed-row sr">
+        <div class="feed-row-av fav6"></div>
+        <div class="feed-row-body">
+          <div class="feed-row-name">User Post</div>
+          <div class="feed-row-sub">Project or product launch</div>
+        </div>
+      </div>
+      <div class="feed-row feed-row-ad sr d1">
+        <div class="feed-row-av fav-blue"></div>
+        <div class="feed-row-body">
+          <div class="feed-row-name" style="color:var(--blue2)">Sponsored Ad</div>
+          <div class="feed-row-sub">Rotates automatically by admin</div>
+        </div>
+        <div class="ad-pill">AD</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ VERIFIED ══════════════ -->
+<section id="verified" class="sec sec-dark2">
+  <div class="container">
+    <div class="center">
+      <p class="tag sr">Trust &amp; Identity</p>
+      <h2 class="h2 sr d1">Get Verified on ONEXO</h2>
+      <p class="lead sr d2" style="margin-top:12px;">Make your profile look more trusted with a blue verified badge beside your username.</p>
+    </div>
+    <div class="verified-box sr d2">
+      <div class="vbig">
+        <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <h3 style="font-size:1.3rem;font-weight:800;">Blue Verified Badge</h3>
+      <p style="color:var(--t3);font-size:.88rem;max-width:360px;margin:10px auto 0;line-height:1.7;">Stand out as a real, trusted account. Verified users build credibility and grow their audience faster.</p>
+      <div class="v-price">₹299<span style="font-size:1.1rem;color:var(--t3);font-weight:500;">/month</span></div>
+      <div class="v-price-sub">Billed monthly &middot; Cancel anytime</div>
+      <a href="mailto:onexo.support@gmail.com?subject=Get Verified on ONEXO" class="btn btn-blue">Request Verification</a>
+      <p class="v-note">Our team will review your request and contact you within 24 hours.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ ADS ══════════════ -->
+<section id="ads" class="sec sec-dark">
+  <div class="container">
+    <div class="ads-grid">
+      <div>
+        <p class="tag sr">Business Growth</p>
+        <h2 class="h2 sr d1">Advertise Your Brand on ONEXO</h2>
+        <p class="lead sr d2" style="margin-top:12px;max-width:420px;">Promote your shop, app, service, event, or product with sponsored posts placed naturally inside the ONEXO feed.</p>
+        <div class="ads-feats sr d2">
+          <div class="ads-feat">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            <span>Feed sponsored ads</span>
+          </div>
+          <div class="ads-feat">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Image or video ads</span>
+          </div>
+          <div class="ads-feat">
+            <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            <span>App or website link</span>
+          </div>
+          <div class="ads-feat">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span>Run ads for selected days</span>
+          </div>
+          <div class="ads-feat">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+            <span>Admin controlled placement</span>
+          </div>
+          <div class="ads-feat">
+            <svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            <span>Multiple ads rotation</span>
+          </div>
+        </div>
+        <a href="mailto:onexo.support@gmail.com?subject=Advertise on ONEXO" class="btn btn-blue sr" style="margin-top:32px;">Contact for Ads</a>
+      </div>
+      <div class="ad-card-preview sr d2">
+        <div class="acp-label">Sponsored</div>
+        <div class="acp-title">TechStart Agency</div>
+        <div class="acp-sub">We build mobile apps for startups</div>
+        <div class="acp-img">Ad Preview Area</div>
+        <a href="#" class="btn btn-blue" style="font-size:.8rem;padding:9px 18px;">Visit Website →</a>
+        <div class="acp-metrics">
+          <div class="acp-met">
+            <div class="acp-met-val">12K+</div>
+            <div class="acp-met-key">Daily Views</div>
+          </div>
+          <div class="acp-met">
+            <div class="acp-met-val">4.8%</div>
+            <div class="acp-met-key">Avg CTR</div>
+          </div>
+          <div class="acp-met">
+            <div class="acp-met-val">Real</div>
+            <div class="acp-met-key">Users Only</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ BUILD APP ══════════════ -->
+<section id="build" class="sec sec-dark2">
+  <div class="container">
+    <div class="build-inner">
+      <p class="tag center sr">For Builders &amp; Beginners</p>
+      <h2 class="h2 center sr d1">Build Your Own App</h2>
+      <p style="text-align:center;font-size:.97rem;font-weight:700;color:var(--blue2);margin-top:8px;" class="sr d1">Learn &middot; Plan &middot; Build Free</p>
+      <p class="lead center sr d2" style="margin-top:12px;">Share your app idea with our team and learn how to turn it into a real project using AI. We help beginners plan the idea, design the UI, understand the backend, and follow the step-by-step build process.</p>
+      <div class="build-steps">
+        <div class="build-step sr">
+          <div class="build-step-num">STEP 01</div>
+          <div class="build-step-t">Share Your Idea</div>
+          <div class="build-step-d">Tell us your app concept. No experience needed — just a clear vision.</div>
+        </div>
+        <div class="build-step sr d1">
+          <div class="build-step-num">STEP 02</div>
+          <div class="build-step-t">We Plan Together</div>
+          <div class="build-step-d">Our team helps you sketch the UI, choose a tech stack, and map features.</div>
+        </div>
+        <div class="build-step sr d2">
+          <div class="build-step-num">STEP 03</div>
+          <div class="build-step-t">Start Building</div>
+          <div class="build-step-d">Get step-by-step guidance using AI tools to turn your plan into a real product.</div>
+        </div>
+      </div>
+      <div class="center sr">
+        <a href="mailto:sumit.grow77@gmail.com?subject=Build My App Idea" class="btn btn-blue">Share Your Idea</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ SAFETY ══════════════ -->
+<section id="safety" class="sec sec-dark">
+  <div class="container">
+    <div class="center">
+      <p class="tag sr">Trust &amp; Protection</p>
+      <h2 class="h2 sr d1">Built with Safety in Mind</h2>
+      <p class="lead sr d2" style="margin-top:12px;">ONEXO protects every user with intelligent systems that run quietly in the background — so you can focus on connecting.</p>
+    </div>
+    <div class="safe-grid">
+      <div class="card safe-card sr">
+        <div class="icon-box icon-box-green">
+          <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <h3 class="safe-t">Fake Email Protection</h3>
+        <p class="safe-d">Email verification ensures every account belongs to a real person before they can post.</p>
+      </div>
+      <div class="card safe-card sr d1">
+        <div class="icon-box icon-box-green">
+          <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3 class="safe-t">Strong Password Check</h3>
+        <p class="safe-d">Password strength is verified at signup to prevent weak credentials from day one.</p>
+      </div>
+      <div class="card safe-card sr d2">
+        <div class="icon-box icon-box-green">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h3 class="safe-t">Login Attempt Lock</h3>
+        <p class="safe-d">Repeated wrong login attempts automatically lock access to prevent brute-force attacks.</p>
+      </div>
+      <div class="card safe-card sr d3">
+        <div class="icon-box icon-box-green">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 class="safe-t">Admin User Control</h3>
+        <p class="safe-d">Admins can review, manage, and take action on any account directly from the panel.</p>
+      </div>
+      <div class="card safe-card sr">
+        <div class="icon-box icon-box-green">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        </div>
+        <h3 class="safe-t">Temporary Ban</h3>
+        <p class="safe-d">Users who violate guidelines can be temporarily suspended while a full review takes place.</p>
+      </div>
+      <div class="card safe-card sr d1">
+        <div class="icon-box icon-box-green">
+          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </div>
+        <h3 class="safe-t">Permanent Restriction</h3>
+        <p class="safe-d">Fake or harmful accounts can be permanently restricted by admins to protect the community.</p>
+      </div>
+      <div class="card safe-card sr d2">
+        <div class="icon-box icon-box-green">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <h3 class="safe-t">13+ Age Restriction</h3>
+        <p class="safe-d">Date of birth is verified at signup to ensure only age-appropriate users can join ONEXO.</p>
+      </div>
+      <div class="card safe-card sr d3">
+        <div class="icon-box icon-box-green">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3 class="safe-t">Clear Error Messages</h3>
+        <p class="safe-d">Every error is written in plain language so users always know what happened and what to do next.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ ADMIN ══════════════ -->
+<section id="admin" class="sec sec-dark2">
+  <div class="container">
+    <div class="admin-wrap">
+      <div>
+        <p class="tag sr">Platform Management</p>
+        <h2 class="h2 sr d1">Private ONEXO Admin Panel</h2>
+        <p class="lead sr d2" style="margin-top:12px;max-width:400px;">ONEXO includes a private admin panel to manage sponsored ads, verified badges, users, and safety controls — all from one clean interface.</p>
+        <ul class="admin-list">
+          <li class="sr">Create and manage sponsored ads</li>
+          <li class="sr d1">Upload image or video ad creatives</li>
+          <li class="sr d1">Add app or website link to ads</li>
+          <li class="sr d2">Set how often ads appear in the feed</li>
+          <li class="sr d2">Set ad duration and expiry</li>
+          <li class="sr">Enable or disable blue verified badge</li>
+          <li class="sr d1">View users sorted by latest login date</li>
+          <li class="sr d1">Temporarily ban users</li>
+          <li class="sr d2">Permanently restrict fake accounts</li>
+        </ul>
+      </div>
+      <div class="adm-mock sr d2">
+        <div class="adm-bar">
+          <div class="adm-dot adm-red"></div>
+          <div class="adm-dot adm-yel"></div>
+          <div class="adm-dot adm-grn"></div>
+          <span class="adm-bar-title">ONEXO Admin — Private</span>
+        </div>
+        <div class="adm-body">
+          <div class="adm-sidebar">
+            <div class="adm-nav on"><div class="adm-nav-dot2"></div>Dashboard</div>
+            <div class="adm-nav"><div class="adm-nav-dot2"></div>Users</div>
+            <div class="adm-nav"><div class="adm-nav-dot2"></div>Ads</div>
+            <div class="adm-nav"><div class="adm-nav-dot2"></div>Verified</div>
+            <div class="adm-nav"><div class="adm-nav-dot2"></div>Safety</div>
+          </div>
+          <div class="adm-main">
+            <div class="adm-stats">
+              <div class="adm-stat"><div class="adm-stat-val">2.4K</div><div class="adm-stat-key">Users</div></div>
+              <div class="adm-stat"><div class="adm-stat-val">8</div><div class="adm-stat-key">Live Ads</div></div>
+              <div class="adm-stat"><div class="adm-stat-val">142</div><div class="adm-stat-key">Verified</div></div>
+            </div>
+            <table class="adm-tbl">
+              <thead>
+                <tr><th>User</th><th>Last Seen</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>@arjun_s</td><td>Today</td><td><span class="status s-on">Active</span></td></tr>
+                <tr><td>@priya_n</td><td>Yesterday</td><td><span class="status s-on">Active</span></td></tr>
+                <tr><td>@fake_acc1</td><td>3 days ago</td><td><span class="status s-warn">Review</span></td></tr>
+                <tr><td>@ravi_k</td><td>Today</td><td><span class="status s-on">Active</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ APP SCREENS ══════════════ -->
+<section id="screens" class="sec sec-dark">
+  <div class="container">
+    <div class="center">
+      <p class="tag sr">App Screens</p>
+      <h2 class="h2 sr d1">Designed for every moment</h2>
+      <p class="lead sr d2" style="margin-top:12px;">Clean, minimal screens that feel intuitive from the very first tap.</p>
+    </div>
+    <div class="screens-grid">
+
+      <!-- Home Feed -->
+      <div class="card scr-card sr">
+        <div class="scr-preview">
+          <div class="scr-hdr">O N E X O</div>
+          <div class="mini-post">
+            <div class="mini-av av1"></div>
+            <div class="mini-lines">
+              <div class="mini-bar scr-bar w65"></div>
+              <div class="mini-bar scr-bar w40" style="margin-top:3px;"></div>
+            </div>
+          </div>
+          <div class="scr-bar w80"></div>
+          <div class="scr-bar w65" style="margin-top:4px;"></div>
+          <div style="height:42px;background:rgba(29,110,255,.08);border-radius:7px;margin:8px 0;"></div>
+          <div style="display:flex;gap:8px;opacity:.45;margin-bottom:8px;">
+            <svg width="9" height="9" viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            <span style="font-size:.5rem;color:var(--t3)">128</span>
+            <svg width="9" height="9" viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span style="font-size:.5rem;color:var(--t3)">34</span>
+          </div>
+          <div style="background:rgba(29,110,255,.08);border:1px solid rgba(29,110,255,.18);border-radius:7px;padding:6px 8px;">
+            <div style="font-size:.48rem;color:var(--blue2);font-weight:800;letter-spacing:.08em;margin-bottom:2px;">SPONSORED</div>
+            <div class="scr-bar w70" style="height:5px;background:rgba(255,255,255,.08);"></div>
+          </div>
+        </div>
+        <div class="scr-lbl">Home Feed</div>
+        <div class="scr-sub">Posts, reactions &amp; sponsored ads</div>
+      </div>
+
+      <!-- Profile -->
+      <div class="card scr-card sr d1">
+        <div class="scr-preview" style="align-items:center;">
+          <div style="width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue2));margin:0 auto 8px;"></div>
+          <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px;">
+            <span style="font-size:.62rem;font-weight:800;">Arjun Sharma</span>
+            <div class="vbadge"><svg viewBox="0 0 10 10"><path d="M3.5 6.5L2 5l-1 1 2.5 2.5 5-5L7.5 2z"/></svg></div>
+          </div>
+          <div style="font-size:.52rem;color:var(--t3);margin-bottom:10px;">Founder &middot; Builder</div>
+          <div style="display:flex;gap:16px;margin-bottom:12px;">
+            <div style="text-align:center;"><div style="font-size:.68rem;font-weight:800;">248</div><div style="font-size:.48rem;color:var(--t3)">Posts</div></div>
+            <div style="text-align:center;"><div style="font-size:.68rem;font-weight:800;">4.1K</div><div style="font-size:.48rem;color:var(--t3)">Followers</div></div>
+            <div style="text-align:center;"><div style="font-size:.68rem;font-weight:800;">312</div><div style="font-size:.48rem;color:var(--t3)">Following</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;width:100%;">
+            <div style="height:46px;background:linear-gradient(135deg,#0f1a35,#1a2a55);border-radius:5px;"></div>
+            <div style="height:46px;background:linear-gradient(135deg,#1a1035,#2a1555);border-radius:5px;"></div>
+            <div style="height:46px;background:linear-gradient(135deg,#0f2535,#0f4560);border-radius:5px;"></div>
+          </div>
+        </div>
+        <div class="scr-lbl">Profile</div>
+        <div class="scr-sub">Posts, followers &amp; verified badge</div>
+      </div>
+
+      <!-- Search -->
+      <div class="card scr-card sr d2">
+        <div class="scr-preview">
+          <div class="scr-hdr">Search</div>
+          <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:7px;padding:5px 9px;margin-bottom:9px;display:flex;align-items:center;gap:5px;">
+            <svg width="9" height="9" viewBox="0 0 24 24" stroke="rgba(255,255,255,.28)" fill="none" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <span style="font-size:.56rem;color:var(--t3)">Search people...</span>
+          </div>
+          <div style="font-size:.5rem;color:var(--t3);margin-bottom:6px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;">Suggested</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <div class="mini-av av2"></div>
+            <div style="flex:1"><div class="scr-bar w60" style="height:5px;margin-bottom:3px;"></div><div class="scr-bar w40" style="height:4px;"></div></div>
+            <div style="background:var(--blue);font-size:.48rem;padding:2px 7px;border-radius:4px;color:#fff;font-weight:700;">Follow</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <div class="mini-av av3"></div>
+            <div style="flex:1"><div class="scr-bar w70" style="height:5px;margin-bottom:3px;"></div><div class="scr-bar w50" style="height:4px;"></div></div>
+            <div style="background:rgba(255,255,255,.07);font-size:.48rem;padding:2px 7px;border-radius:4px;color:var(--t3);font-weight:700;border:1px solid rgba(255,255,255,.1)">Following</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="mini-av" style="background:linear-gradient(135deg,#2ECC71,#1ABC9C);"></div>
+            <div style="flex:1"><div class="scr-bar w55" style="height:5px;margin-bottom:3px;"></div><div class="scr-bar w40" style="height:4px;"></div></div>
+            <div style="background:var(--blue);font-size:.48rem;padding:2px 7px;border-radius:4px;color:#fff;font-weight:700;">Follow</div>
+          </div>
+        </div>
+        <div class="scr-lbl">Search</div>
+        <div class="scr-sub">Discover people &amp; ideas</div>
+      </div>
+
+      <!-- Messages -->
+      <div class="card scr-card sr d3">
+        <div class="scr-preview">
+          <div class="scr-hdr">Messages</div>
+          <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:5px;">
+            <div class="mini-av av1"></div>
+            <div style="flex:1"><div style="font-size:.58rem;font-weight:700;color:#fff;margin-bottom:1px;">Arjun Sharma</div><div style="font-size:.52rem;color:var(--t3);">Hey! Saw your post...</div></div>
+            <div style="font-size:.48rem;color:var(--t3)">2m</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.04);margin-bottom:8px;">
+            <div class="mini-av av2"></div>
+            <div style="flex:1"><div style="font-size:.58rem;font-weight:700;color:#fff;margin-bottom:1px;">Priya Nanda</div><div style="font-size:.52rem;color:var(--t3);">Let's collab!</div></div>
+            <div style="font-size:.48rem;color:var(--t3)">1h</div>
+          </div>
+          <div class="msg-b msg-in">That sounds amazing!</div>
+          <div class="msg-b msg-out">Thanks! Let's connect</div>
+          <div class="msg-b msg-in" style="max-width:70%;">When are you free?</div>
+        </div>
+        <div class="scr-lbl">Messages</div>
+        <div class="scr-sub">Private conversations</div>
+      </div>
+
+      <!-- Settings -->
+      <div class="card scr-card sr">
+        <div class="scr-preview" style="align-items:center;">
+          <div style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue2));margin:0 auto 7px;"></div>
+          <div style="font-size:.6rem;font-weight:700;margin-bottom:2px;">@yourhandle</div>
+          <div style="display:inline-block;background:rgba(29,110,255,.15);color:var(--blue2);font-size:.48rem;padding:2px 8px;border-radius:999px;font-weight:700;margin-bottom:10px;">Edit Profile</div>
+          <div style="width:100%;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+              <span style="font-size:.58rem;color:var(--t2)">Notifications</span>
+              <div style="width:22px;height:11px;background:var(--blue);border-radius:999px;position:relative;"><div style="position:absolute;right:2px;top:2px;width:7px;height:7px;background:#fff;border-radius:50%;"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);">
+              <span style="font-size:.58rem;color:var(--t2)">Privacy</span>
+              <svg width="7" height="7" viewBox="0 0 24 24" stroke="rgba(255,255,255,.3)" fill="none" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;">
+              <span style="font-size:.58rem;color:var(--t2)">Account</span>
+              <svg width="7" height="7" viewBox="0 0 24 24" stroke="rgba(255,255,255,.3)" fill="none" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="scr-lbl">Settings</div>
+        <div class="scr-sub">Privacy, account &amp; controls</div>
+      </div>
+
+      <!-- Admin Screen -->
+      <div class="card scr-card sr d1">
+        <div class="scr-preview" style="background:#08080E;">
+          <div class="scr-hdr" style="color:var(--blue);">ADMIN PANEL</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:8px;">
+            <div style="background:rgba(29,110,255,.1);border:1px solid rgba(29,110,255,.2);border-radius:6px;padding:6px;text-align:center;">
+              <div style="font-size:.75rem;font-weight:800;color:var(--blue);">2.4K</div>
+              <div style="font-size:.44rem;color:var(--t3);">Total Users</div>
+            </div>
+            <div style="background:rgba(46,204,113,.08);border:1px solid rgba(46,204,113,.2);border-radius:6px;padding:6px;text-align:center;">
+              <div style="font-size:.75rem;font-weight:800;color:#2ECC71;">8</div>
+              <div style="font-size:.44rem;color:var(--t3);">Live Ads</div>
+            </div>
+          </div>
+          <div style="font-size:.48rem;color:var(--t3);margin-bottom:4px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;">Recent Actions</div>
+          <div style="font-size:.56rem;color:var(--t2);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);">&#10003; Ad approved — TechStart</div>
+          <div style="font-size:.56rem;color:var(--t2);padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);">&#10003; Verified — @arjun_s</div>
+          <div style="font-size:.56rem;color:rgba(254,188,46,.75);padding:3px 0;">&#9888; Review pending — @fake01</div>
+        </div>
+        <div class="scr-lbl">Admin Panel</div>
+        <div class="scr-sub">Private management dashboard</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══════════════ FAQ ══════════════ -->
+<section id="faq" class="sec sec-dark2">
+  <div class="container">
+    <div class="center" style="margin-bottom:0;">
+      <p class="tag sr">Got Questions?</p>
+      <h2 class="h2 sr d1">Frequently Asked Questions</h2>
+    </div>
+    <div class="faq-wrap">
+      <div class="faq-item sr">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What is ONEXO?
+          <span class="faq-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </button>
+        <div class="faq-a">ONEXO is a modern social media platform where you can share posts, ideas, photos, and achievements — and connect meaningfully with people who matter to you. It is built for real people, not bots.</div>
+      </div>
+      <div class="faq-item sr d1">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Is ONEXO free to use?
+          <span class="faq-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </button>
+        <div class="faq-a">Yes, ONEXO is completely free to sign up and use. Core features like posting, following, messaging, and exploring the feed are available at no cost. The verified badge is an optional premium add-on at ₹299/month.</div>
+      </div>
+      <div class="faq-item sr d2">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How can I advertise my brand on ONEXO?
+          <span class="faq-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </button>
+        <div class="faq-a">Use the "Contact for Ads" button to reach our team. We will discuss your brand, budget, and target audience — then place your sponsored post naturally inside the ONEXO feed for maximum visibility.</div>
+      </div>
+      <div class="faq-item sr">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How can I get verified?
+          <span class="faq-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </button>
+        <div class="faq-a">Click the "Request Verification" button and send us a message. Our team will review your profile and respond within 24 hours. Verification costs ₹299 per month and helps your profile appear more trusted and authentic.</div>
+      </div>
+      <div class="faq-item sr d1">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Can I share my app idea and get help building it?
+          <span class="faq-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </button>
+        <div class="faq-a">Absolutely. Use the "Share Your Idea" button in the Build App section. Our team will help you plan the UI, understand the tech stack, and guide you step by step — using AI tools to make the process accessible for complete beginners.</div>
+      </div>
+      <div class="faq-item sr d2">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Is ONEXO safe to use?
+          <span class="faq-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+        </button>
+        <div class="faq-a">Yes. ONEXO is built with safety as a core priority. We verify emails, check password strength, lock accounts after repeated failed logins, restrict users under 13, and give admins the tools to act quickly on any safety concern.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <div class="container">
+    <div class="ft-inner">
+      <div>
+        <div class="ft-logo">O N E X O</div>
+        <div class="ft-tag">Share your ideas with the world.</div>
+      </div>
+      <div class="ft-links">
+        <a href="#hero">Home</a>
+        <a href="#features">Features</a>
+        <a href="#ads">Advertise</a>
+        <a href="#verified">Verified</a>
+        <a href="#build">Build App</a>
+        <a href="#safety">Safety</a>
+        <a href="mailto:onexo.support@gmail.com">Contact</a>
+      </div>
+    </div>
+    <div class="ft-bottom">
+      <div class="ft-copy">&copy; 2026 ONEXO. All rights reserved.</div>
+      <div class="ft-made">Built with <span>ONEXO</span></div>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════ JS ══════════════ -->
+<script>
+  // Scroll reveal
+  (function(){
+    var els = document.querySelectorAll('.sr');
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting) e.target.classList.add('vis');
+      });
+    },{threshold:0.08, rootMargin:'0px 0px -30px 0px'});
+    els.forEach(function(el){ io.observe(el); });
+    // Trigger hero immediately
+    setTimeout(function(){
+      document.querySelectorAll('#hero .sr').forEach(function(el){ el.classList.add('vis'); });
+    }, 80);
+  })();
+
+  // FAQ accordion
+  function toggleFaq(btn){
+    var item = btn.parentElement;
+    var isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
+    if(!isOpen) item.classList.add('open');
+  }
+</script>
+</body>
+</html>
